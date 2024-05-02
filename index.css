@@ -1,0 +1,16 @@
+img{
+    width: 100%;
+    height: 180px;
+    width: 180px;
+}
+#cont{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+#navbar{
+    text-align: center;
+}
+select{
+    margin-left: 0px;
+}

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listing Page</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id="main">
+        <h1>Product Listing Page</h1>
+        <div id="filters">
+            <input type="text" id="searchInput" placeholder="Search by title...">
+            <select id="sortOrder">
+                <option value="asc">Price Low to High</option>
+                <option value="desc">Price High to Low</option>
+            </select>
+        </div>
+        <div id="productList"></div>
+        <button>Fetch Products</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let productList = document.getElementById("productList");
+            let button = document.querySelector("button");
+            let sortOrder = document.getElementById("sortOrder");
+            let searchInput = document.getElementById("searchInput");
+
+            button.addEventListener("click", function(event) {
+                event.preventDefault();
+                fetchData();
+            });
+
+            searchInput.addEventListener("input", function() {
+                fetchData();
+            });
+
+            async function fetchData() {
+                try {
+                    let response = await fetch("https://fakestoreapi.com/products");
+                    let data = await response.json();
+
+                    let filteredData = filterData(data, searchInput.value);
+                    let sortedData = sortData(filteredData, sortOrder.value);
+                    showData(sortedData);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            function filterData(data, query) {
+                if (!query) {
+                    return data;
+                }
+                return data.filter(product => product.title.toLowerCase().includes(query.toLowerCase()));
+            }
+
+            function sortData(data, order) {
+                if (order === "asc") {
+                    return data.slice().sort((a, b) => a.price - b.price);
+                } else if (order === "desc") {
+                    return data.slice().sort((a, b) => b.price - a.price);
+                }
+                return data;
+            }
+
+            function showData(data) {
+                productList.innerHTML = "";
+                data.forEach(element => {
+                    let sepDiv = document.createElement("div");
+                    sepDiv.className = "sepDiv";
+
+                    let id = document.createElement("h4");
+                    id.innerHTML = "ID: " + element.id;
+
+                    let title = document.createElement("h4");
+                    title.innerHTML = "Title: " + element.title;
+
+                    let description = document.createElement("h4");
+                    description.innerHTML = "Description: " + element.description;
+
+                    let price = document.createElement("h4");
+                    price.innerHTML = "Price: $" + element.price;
+
+                    let image = document.createElement("img");
+                    image.src = element.image;
+
+                    sepDiv.appendChild(image);
+                    sepDiv.appendChild(id);
+                    sepDiv.appendChild(title);
+                    sepDiv.appendChild(description);
+                    sepDiv.appendChild(price);
+
+                    productList.appendChild(sepDiv);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
